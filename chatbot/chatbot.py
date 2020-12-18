@@ -23,3 +23,10 @@ for conversa in conversas[:-1]:
     _conversa = conversa.split(' +++$+++ ')[-1][1:-1].replace("'","").replace(" ","")
     conversas_id.append(_conversa.split(','))
     
+#Separação das perguntas e respostas
+perguntas = []
+respostas = []
+for conversa in conversas_id:
+    for i in range(len(conversa)-1):
+        perguntas.append(id_para_linha[conversa[i]])
+        respostas.append(id_para_linha[conversa[i+1]])
