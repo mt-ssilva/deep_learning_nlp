@@ -48,3 +48,36 @@ def limpa_texto(texto):
     texto = re.sub(r"can't", "cannot", texto)
     texto = re.sub(r"[-()#/@;:<>{}~+=?.|,]", "", texto)
     return texto
+    
+#Limpeza das perguntas e respostas
+perguntas_limpas = []
+for pergunta in perguntas:
+    perguntas_limpas.append(limpa_texto(pergunta))
+
+respostas_limpas = []
+for resposta in respostas:
+    respostas_limpas.append(limpa_texto(resposta))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
