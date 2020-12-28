@@ -306,6 +306,11 @@ learnig_rate_decaimento = 0.9
 min_learning_rate = 0.0001
 probabilidade_dropout = 0.5
 
+#Definição da seção
+tf.reset_default_graph()
+session = tf.InteractiveSession()
+
+
 
 
 
