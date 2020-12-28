@@ -192,7 +192,7 @@ def decodifica_base_treinamento(encoder_estado, decodificador_celula,
     
 #Decodificação da base de teste/validação
 def decodifica_base_teste(encoder_estado, decodificador_celula,
-                          decodificador_embedded_matriz, sos_id,
+                          decodificador_embedded_matrix, sos_id,
                           eos_id, tamanho_maximo, numero_palavras,
                           decodificador_escopo, funcao_saida,
                           keep_prob, batch_size):
@@ -208,7 +208,7 @@ def decodifica_base_teste(encoder_estado, decodificador_celula,
                                                                                    attention_values,
                                                                                    attention_score_function,
                                                                                    attention_construct_function,
-                                                                                   decodificador_embedded_matriz,
+                                                                                   decodificador_embedded_matrix,
                                                                                    sos_id,
                                                                                    eos_id,
                                                                                    tamanho_maximo,
@@ -221,7 +221,44 @@ def decodifica_base_teste(encoder_estado, decodificador_celula,
     
     return previsoes_teste                                                                                                                               
     
-
+#Criação da RNN do decodificador
+def rnn_decodificador(decodificador_embedded_entrada, decodificador_embeddings_matrix,
+                      codificador_estado, numero_palavras, tamanho_sequencia, rnn_tamanho,
+                      numero_camadas, palavra_para_int, keep_prob, batch_size):
+    with tf.variable_scope("decodificador") as decodificador_escopo:
+        lstm = tf.contrib.rnn.LSTMCell(rnn_tamanho)
+        lstm_dropout = tf.contrib.rnn.DropoutWrapper(lstm, input_keep_prob = keep_prob)
+        decodificador_celula = tf.contrib.rnn.MultiRNNCell([lstm_dropout] * numero_camadas)
+        pesos = tf.truncated_normal_initializer(stddev = 0.1)
+        biases = tf.zeros_initializer()
+        funcao_saida = lambda x: tf.contrib.layers.fully_connected(x, numero_palavras,
+                                                                   None, scope = decodificador_escopo,
+                                                                   weights_initializer = pesos,
+                                                                   baises_initializer = biases)
+        
+        previsoes_treinamento = decodifica_base_treinamento(codificador_estado,
+                                                            decodificador_celula,
+                                                            decodificador_embedded_entrada,
+                                                            tamanho_sequencia,
+                                                            decodificador_escopo,
+                                                            funcao_saida,
+                                                            keep_prob,
+                                                            batch_size)
+        
+        decodificador_escopo.reuse_variables()
+        previsoes_teste = decodifica_base_teste(codificador_estado,
+                                                decodificador_celula,
+                                                decodificador_embeddings_matrix,
+                                                palavra_para_int['<SOS>'],
+                                                palavra_para_int['<EOS>'],
+                                                tamanho_sequencia -1,
+                                                numero_palavras,
+                                                decodificador_escopo,
+                                                funcao_saida,
+                                                keep_prob,
+                                                batch_size)
+        
+        return previsoes_treinamento, previsoes_teste
 
 
 
