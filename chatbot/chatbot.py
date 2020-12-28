@@ -316,6 +316,8 @@ entradas, saidas, lr, keep_prob = entradas_modelo()
 #Configuração do tamanho da sequência
 tamanho_sequencia = tf.placeholder_with_default(25, None, name= 'tamanho_sequencia')
 
+#Obtenção das dimensões dos tensores de entrada
+dimensao_entrada = tf.shape(entradas)
 
 
 
